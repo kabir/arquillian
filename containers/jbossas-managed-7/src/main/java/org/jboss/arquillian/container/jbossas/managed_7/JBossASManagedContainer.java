@@ -34,9 +34,9 @@ import org.jboss.arquillian.spi.Logger;
  * @author Thomas.Diesler@jboss.com
  * @since 17-Nov-2010
  */
-public class JBossASEmbeddedContainer extends AbstractDeployableContainer
+public class JBossASManagedContainer extends AbstractDeployableContainer
 {
-   private final Logger log = Logger.getLogger(JBossASEmbeddedContainer.class);
+   private final Logger log = Logger.getLogger(JBossASManagedContainer.class);
    private Process process;
 
    @Override
