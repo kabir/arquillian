@@ -31,6 +31,7 @@ import org.jboss.arquillian.protocol.jmx.JMXMethodExecutor.ExecutionType;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.LifecycleException;
+import org.jboss.as.server.EmbeddedServerFactory;
 import org.jboss.as.server.StandaloneServer;
 import org.jboss.as.server.StandaloneServerFactory;
 
@@ -69,7 +70,7 @@ public class JBossASEmbeddedContainer extends AbstractDeployableContainer
          sysprops.setProperty("logging.configuration", "file:" + jbossHomeDir + "/standalone/configuration/logging.properties");
          sysprops.setProperty("org.jboss.boot.log.file", jbossHomeDir + "/standalone/log/boot.log");
 
-         server = StandaloneServerFactory.create(jbossHomeDir, sysprops);
+         server = EmbeddedServerFactory.create(jbossHomeDir, sysprops);
          server.start();
 
          long timeout = 5000;
