@@ -149,7 +149,7 @@ public abstract class AbstractDeployableContainer implements DeployableContainer
       return deployAction.getDeploymentUnitUniqueName();
    }
 
-   private ContainerMethodExecutor getContainerMethodExecutor()
+   protected ContainerMethodExecutor getContainerMethodExecutor()
    {
       return new JMXMethodExecutor(getMBeanServerConnection(), ExecutionType.REMOTE, JMXTestRunnerMBean.OBJECT_NAME);
    }

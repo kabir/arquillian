@@ -154,6 +154,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
+              <redirectTestOutputToFile>false</redirectTestOutputToFile>
               <systemProperties>
                 <property>
                   <name>java.util.logging.manager</name>

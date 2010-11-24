@@ -17,6 +17,7 @@
 package org.jboss.arquillian.container.jbossas.embedded_7;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Properties;
@@ -24,7 +25,10 @@ import java.util.Properties;
 import javax.management.MBeanServerConnection;
 
 import org.jboss.arquillian.protocol.domain.AbstractDeployableContainer;
+import org.jboss.arquillian.protocol.jmx.JMXMethodExecutor;
 import org.jboss.arquillian.protocol.jmx.JMXTestRunnerMBean;
+import org.jboss.arquillian.protocol.jmx.JMXMethodExecutor.ExecutionType;
+import org.jboss.arquillian.spi.ContainerMethodExecutor;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.LifecycleException;
 import org.jboss.as.server.StandaloneServer;
@@ -109,6 +113,17 @@ public class JBossASEmbeddedContainer extends AbstractDeployableContainer
       {
          throw new LifecycleException("Could not stop container", e);
       }
+   }
+   
+   @Override
+   public MBeanServerConnection getMBeanServerConnection() 
+   {
+      return ManagementFactory.getPlatformMBeanServer();
+   }
+
+   protected ContainerMethodExecutor getContainerMethodExecutor()
+   {
+      return new JMXMethodExecutor(getMBeanServerConnection(), ExecutionType.EMBEDDED, JMXTestRunnerMBean.OBJECT_NAME);
    }
 
    private LifecycleException handleStartThrowable(Throwable th) throws LifecycleException
