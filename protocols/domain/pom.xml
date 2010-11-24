@@ -21,7 +21,7 @@
 
   <!-- Properties -->
   <properties>
-    <version.org.jboss.jbossas>7.0.0.Alpha1</version.org.jboss.jbossas>
+    <version.org.jboss.jbossas>7.0.0.Alpha2-SNAPSHOT</version.org.jboss.jbossas>
   </properties>
 
   <!-- Dependencies -->

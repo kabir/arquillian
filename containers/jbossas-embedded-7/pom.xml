@@ -23,6 +23,7 @@
   <!-- Properties -->
   <properties>
     <version.org.jboss.jbossas>7.0.0.Alpha2-SNAPSHOT</version.org.jboss.jbossas>
+    <version.org.jboss.marshalling>1.3.0.CR8</version.org.jboss.marshalling>
   </properties>
 
   <!-- Dependencies -->
@@ -70,6 +71,13 @@
       <artifactId>arquillian-junit</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.jboss.marshalling</groupId>
+        <artifactId>jboss-marshalling-river</artifactId>
+        <version>${version.org.jboss.marshalling}</version>
+        <scope>test</scope>
     </dependency>
   </dependencies>
 
