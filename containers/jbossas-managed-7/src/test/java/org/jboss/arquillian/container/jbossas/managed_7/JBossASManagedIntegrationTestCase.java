@@ -42,9 +42,9 @@ import org.junit.runner.RunWith;
  * @since 17-Nov-2010
  */
 @RunWith(Arquillian.class)
-public class JBossASEmbeddedIntegrationTestCase
+public class JBossASManagedIntegrationTestCase
 {
-   final static Logger log = Logger.getLogger(JBossASEmbeddedIntegrationTestCase.class);
+   final static Logger log = Logger.getLogger(JBossASManagedIntegrationTestCase.class);
 
    @Inject
    public ServiceContainer container;
@@ -55,7 +55,7 @@ public class JBossASEmbeddedIntegrationTestCase
       JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "test.jar");
       archive.addClasses(SimpleServiceActivator.class);
       String path = "META-INF/services/" + ServiceActivator.class.getName();
-      URL resourceURL = JBossASEmbeddedIntegrationTestCase.class.getResource("/module/" + path);
+      URL resourceURL = JBossASManagedIntegrationTestCase.class.getResource("/module/" + path);
       archive.addResource(new File(resourceURL.getFile()), path);
       return archive;
    }

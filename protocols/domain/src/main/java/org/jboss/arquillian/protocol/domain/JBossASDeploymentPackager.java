@@ -71,6 +71,7 @@ public class JBossASDeploymentPackager implements DeploymentPackager
       StringBuffer moduleDeps = new StringBuffer(value != null ? value + "," : "");
       moduleDeps.append("org.jboss.arquillian.api");
       moduleDeps.append(",org.jboss.arquillian.junit");
+      moduleDeps.append(",org.jboss.arquillian.spi");
       moduleDeps.append(",org.jboss.shrinkwrap.api");
       moduleDeps.append(",junit.junit");
       attributes.putValue("Dependencies", moduleDeps.toString());
