@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 import javax.management.MBeanServerConnection;
 
-import org.jboss.arquillian.osgi.RepositoryArchiveLocator;
+import org.jboss.arquillian.jmx.RepositoryArchiveLocator;
 import org.jboss.arquillian.protocol.jmx.JMXTestRunnerMBean;
 import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;

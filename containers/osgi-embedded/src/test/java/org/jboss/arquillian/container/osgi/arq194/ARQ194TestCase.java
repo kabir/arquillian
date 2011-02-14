@@ -24,10 +24,9 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.api.ArchiveProvider;
 import org.jboss.arquillian.container.osgi.arq194.bundle.ARQ194Activator;
+import org.jboss.arquillian.jmx.DeploymentProvider;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.osgi.OSGiContainer;
 import org.jboss.osgi.testing.OSGiManifestBuilder;
-import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -50,13 +49,13 @@ public class ARQ194TestCase
    public BundleContext context;
 
    @Inject
-   public OSGiContainer container;
+   public DeploymentProvider provider;
 
    @Test
    public void testInstallBundleFromArchive() throws Exception
    {
-      Archive<?> archive = container.getTestArchive("arq194-bundle");
-      Bundle bundle = container.installBundle(archive);
+      InputStream input = provider.getClientDeploymentAsStream("arq194-bundle");
+      Bundle bundle = context.installBundle("arq194-bundle", input);
 
       assertEquals("Bundle INSTALLED", Bundle.INSTALLED, bundle.getState());
       assertEquals("arq194-bundle", bundle.getSymbolicName());
@@ -74,7 +73,7 @@ public class ARQ194TestCase
    @Test
    public void testInstallBundleFromStream() throws Exception
    {
-      InputStream input = container.getTestArchiveStream("arq194-bundle");
+      InputStream input = provider.getClientDeploymentAsStream("arq194-bundle");
       Bundle bundle = context.installBundle("arq194-bundle", input);
 
       assertEquals("Bundle INSTALLED", Bundle.INSTALLED, bundle.getState());

@@ -28,7 +28,6 @@ import java.lang.annotation.Target;
  * to allow tests drive additional deployments during test execution.
  *
  * @author <a href="david@redhat.com">David Bosschaert</a>
- * @version $Revision: $
  */
 @Documented
 @Retention(RUNTIME)

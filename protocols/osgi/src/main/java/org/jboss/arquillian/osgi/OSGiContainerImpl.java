@@ -16,28 +16,14 @@
  */
 package org.jboss.arquillian.osgi;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.zip.ZipInputStream;
-
-import org.jboss.arquillian.protocol.jmx.ResourceCallbackHandler;
-import org.jboss.arquillian.spi.TestClass;
-import org.jboss.osgi.spi.util.BundleInfo;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.exporter.ZipExporter;
-import org.jboss.shrinkwrap.api.importer.ZipImporter;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.impl.base.ArchiveBase;
+import org.jboss.arquillian.jmx.DeploymentProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 
 /**
- * An {@link OSGiContainer} implementation.
+ * An {@link DeploymentProvider} implementation.
  *
  * @author thomas.diesler@jboss.com
  * @author <a href="david@redhat.com">David Bosschaert</a>
@@ -46,61 +32,10 @@ import org.osgi.framework.Version;
 class OSGiContainerImpl implements OSGiContainer
 {
    private BundleContext context;
-   private TestClass testClass;
-   private ResourceCallbackHandler callbackHandler;
 
-   OSGiContainerImpl(BundleContext context, TestClass testClass, ResourceCallbackHandler callbackHandler)
+   OSGiContainerImpl(BundleContext context)
    {
       this.context = context;
-      this.testClass = testClass;
-      this.callbackHandler = callbackHandler;
-   }
-
-   @Override
-   public Bundle installBundle(Archive<?> archive) throws BundleException
-   {
-      InputStream inputStream;
-
-      ClassLoader ctxLoader = Thread.currentThread().getContextClassLoader();
-      try
-      {
-         // Read the archive in the context of the arquillian-osgi-bundle
-         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-         ZipExporter exporter = archive.as(ZipExporter.class);
-         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-         exporter.exportZip(baos);
-
-         inputStream = new ByteArrayInputStream(baos.toByteArray());
-      }
-      finally
-      {
-         Thread.currentThread().setContextClassLoader(ctxLoader);
-      }
-
-      return context.installBundle(archive.getName(), inputStream);
-   }
-
-   @Override
-   public Bundle installBundle(String artifactId) throws BundleException
-   {
-      return installBundle(null, artifactId, null);
-   }
-
-   @Override
-   public Bundle installBundle(String groupId, String artifactId, String version) throws BundleException
-   {
-      URL artifactURL = RepositoryArchiveLocator.getArtifactURL(groupId, artifactId, version);
-      if (artifactURL == null)
-         return null;
-
-      // Verify that the artifact is a bundle
-      BundleInfo info = BundleInfo.createBundleInfo(artifactURL);
-      Bundle bundle = getBundle(info.getSymbolicName(), info.getVersion());
-      if (bundle != null)
-         return bundle;
-
-      bundle = context.installBundle(artifactURL.toExternalForm());
-      return bundle;
    }
 
    @Override
@@ -119,41 +54,5 @@ class OSGiContainerImpl implements OSGiContainer
             return bundle;
       }
       return null;
-   }
-
-   @Override
-   public Archive<?> getTestArchive(String name)
-   {
-      InputStream input = getTestArchiveStream(name);
-
-      ClassLoader ctxLoader = SecurityActions.getThreadContextClassLoader();
-      try
-      {
-         // Create the archive in the context of the arquillian-osgi-bundle
-         SecurityActions.setThreadContextClassLoader(ArchiveBase.class.getClassLoader());
-         JavaArchive archive = ShrinkWrap.create(JavaArchive.class, name);
-         ZipImporter zipImporter = archive.as(ZipImporter.class);
-         zipImporter.importZip(new ZipInputStream(input));
-         return archive;
-      }
-      finally
-      {
-         SecurityActions.setThreadContextClassLoader(ctxLoader);
-      }
-   }
-
-   @Override
-   public InputStream getTestArchiveStream(String name)
-   {
-      try
-      {
-         byte[] bytes = callbackHandler.requestResource(testClass, name);
-         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-         return bais;
-      }
-      catch (Exception ex)
-      {
-         throw new IllegalStateException("Cannot obtain test archive: " + name, ex);
-      }
    }
 }

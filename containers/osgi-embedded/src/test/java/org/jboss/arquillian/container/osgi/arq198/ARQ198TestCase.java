@@ -26,9 +26,10 @@ import java.net.URL;
 
 import javax.inject.Inject;
 
+import org.jboss.arquillian.jmx.DeploymentProvider;
+import org.jboss.arquillian.jmx.RepositoryArchiveLocator;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.osgi.OSGiContainer;
-import org.jboss.arquillian.osgi.RepositoryArchiveLocator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
@@ -49,6 +50,9 @@ public class ARQ198TestCase
 
    @Inject
    public static BundleContext context;
+
+   @Inject
+   public DeploymentProvider provider;
 
    @Inject
    public OSGiContainer container;
@@ -97,14 +101,11 @@ public class ARQ198TestCase
    @Test
    public void testInstallBundleAlreadyInstalled() throws Exception
    {
-      Bundle arqBundle = container.getBundle(ARQUILLIAN_OSGI_BUNDLE, null);
-      assertNotNull("ARQ bundle installed", arqBundle);
+      URL url1 = provider.getArchiveURL(ARQUILLIAN_OSGI_BUNDLE);
+      assertNotNull("Bundle URL found", url1);
 
-      Bundle result = container.installBundle(ARQUILLIAN_OSGI_BUNDLE);
-      assertEquals(arqBundle, result);
-
-      result = container.installBundle("org.jboss.arquillian.protocol", ARQUILLIAN_OSGI_BUNDLE, getArquilianVersion());
-      assertEquals(arqBundle, result);
+      URL url2 = provider.getArchiveURL("org.jboss.arquillian.protocol", ARQUILLIAN_OSGI_BUNDLE, getArquilianVersion());
+      assertEquals(url1, url2);
    }
 
    @Test
@@ -113,7 +114,10 @@ public class ARQ198TestCase
       Bundle jmxBundle = container.getBundle("org.apache.aries.jmx", null);
       assertNull("Aries JMX not installed", jmxBundle);
 
-      jmxBundle = container.installBundle("org.apache.aries.jmx");
+      URL url = provider.getArchiveURL("org.apache.aries.jmx");
+      assertNotNull("Bundle URL found", url);
+      
+      jmxBundle = context.installBundle(url.toExternalForm());
       assertNotNull("Aries JMX installed", jmxBundle);
    }
 

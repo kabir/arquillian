@@ -37,6 +37,11 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testenricher</groupId>
+      <artifactId>arquillian-testenricher-jmx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.testenricher</groupId>
       <artifactId>arquillian-testenricher-osgi</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -98,6 +103,7 @@
               arquillian-junit;inline=false,
               arquillian-protocol-jmx;inline=false,
               arquillian-protocol-osgi;inline=false,
+              arquillian-testenricher-jmx;inline=false,
               arquillian-testenricher-osgi;inline=false,
               arquillian-spi;inline=false,
               shrinkwrap-api;inline=false,
@@ -110,6 +116,7 @@
               javax.inject;version=${version.javax.inject_javax.inject},
               org.jboss.arquillian.api;version=${project.version},
               org.jboss.arquillian.junit;version=${project.version},
+              org.jboss.arquillian.jmx;version=${project.version},
               org.jboss.arquillian.osgi;version=${project.version},
               org.jboss.shrinkwrap.api*;version=${version.shrinkwrap_shrinkwrap},
               org.jboss.shrinkwrap.spi*;version=${version.shrinkwrap_shrinkwrap},

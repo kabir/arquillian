@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.osgi;
+package org.jboss.arquillian.jmx;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * A collection Arquillian helper methods
+ * A collection Arquillian helper methods that find an archive in a repository.
  *
  * @author Thomas.Diesler@jboss.com
  * @since 03-Sep-2010
@@ -32,7 +32,6 @@ public final class RepositoryArchiveLocator
    private RepositoryArchiveLocator()
    {
    }
-
 
    /**
     * Get the URL for the given artifact from the 'java.class.path'.

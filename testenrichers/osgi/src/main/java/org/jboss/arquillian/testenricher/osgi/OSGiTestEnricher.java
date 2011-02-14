@@ -22,8 +22,6 @@ import java.lang.reflect.Method;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.osgi.OSGiContainer;
-import org.jboss.arquillian.protocol.jmx.ResourceCallbackHandler;
-import org.jboss.arquillian.protocol.jmx.ResourceCallbackHandlerAssociation;
 import org.jboss.arquillian.spi.Context;
 import org.jboss.arquillian.spi.TestClass;
 import org.jboss.arquillian.spi.TestEnricher;
@@ -87,7 +85,7 @@ public class OSGiTestEnricher implements TestEnricher, BundleContextInjector, Bu
             {
                injectBundleContext(context, testCase, field);
             }
-            if (field.getType().isAssignableFrom(Bundle.class))
+            else if (field.getType().isAssignableFrom(Bundle.class))
             {
                injectBundle(context, testCase, field);
             }
@@ -127,7 +125,7 @@ public class OSGiTestEnricher implements TestEnricher, BundleContextInjector, Bu
       }
       catch (IllegalAccessException ex)
       {
-         throw new IllegalStateException("Cannot inject BundleContext", ex);
+         throw new IllegalStateException("Cannot inject OSGiContainer", ex);
       }
    }
 
@@ -157,7 +155,6 @@ public class OSGiTestEnricher implements TestEnricher, BundleContextInjector, Bu
 
    private OSGiContainer getOSGiContainer(Context context, TestClass testClass)
    {
-      ResourceCallbackHandler callbackHandler = ResourceCallbackHandlerAssociation.getCallbackHandler();
-      return OSGiContainer.Factory.newInstance(bundleContext, testClass, callbackHandler);
+      return OSGiContainer.Factory.newInstance(bundleContext, testClass);
    }
 }

@@ -16,44 +16,27 @@
  */
 package org.jboss.arquillian.osgi;
 
-import java.io.InputStream;
-
-import org.jboss.arquillian.protocol.jmx.ResourceCallbackHandler;
 import org.jboss.arquillian.spi.TestClass;
-import org.jboss.shrinkwrap.api.Archive;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 
 /**
- * An OSGi container that can be injected into Arquillian tests.
- *
+ * Provides OSGi framework specific functionality.
+ * 
+ * An instance of this object can be injected into an test case like this
+ * 
+ * <code>
+ * @Inject
+ * OSGiContainer container;
+ * </code>
+ * 
  * @author thomas.diesler@jboss.com
  * @since 07-Sep-2010
  */
 public interface OSGiContainer
 {
-   /**
-    * Installs a bundle from the given shrinkwrap archive.
-    * @throws BundleException If the bundle could not be installed
-    */
-   Bundle installBundle(Archive<?> archive) throws BundleException;
-
-   /**
-    * Installs a bundle from the given maven artifact id.
-    * This method expects the artifact on the test client's classpath.
-    * @throws BundleException If the artifact could not be found or the bundle could not be installed
-    */
-   Bundle installBundle(String artifactId) throws BundleException;
-
-   /**
-    * Installs a bundle from the given maven artifact.
-    * This method expects the artifact in the local maven repository.
-    * @throws BundleException If the artifact could not be found or the bundle could not be installed
-    */
-   Bundle installBundle(String groupId, String artifactId, String version) throws BundleException;
-
    /**
     * Get a bundle from the local framework instance.
     * @param symbolicName The madatory bundle symbolic name
@@ -63,23 +46,11 @@ public interface OSGiContainer
     */
    Bundle getBundle(String symbolicName, Version version) throws BundleException;
 
-   /**
-    * Gets an archive with the given name by invoking the {@link ArchiveProvider}.
-    * This method makes a callback to the client side to generate the archive.
-    */
-   Archive<?> getTestArchive(String name);
-
-   /**
-    * Gets an an input stream for an archive with the given name by invoking the {@link ArchiveProvider}.
-    * This method makes a callback to the client side to generate the archive.
-    */
-   InputStream getTestArchiveStream(String name);
-
    class Factory
    {
-      public static OSGiContainer newInstance(BundleContext context, TestClass testClass, ResourceCallbackHandler callbackHandler)
+      public static OSGiContainer newInstance(BundleContext context, TestClass testClass)
       {
-         return new OSGiContainerImpl(context, testClass, callbackHandler);
+         return new OSGiContainerImpl(context);
       }
    }
 }
