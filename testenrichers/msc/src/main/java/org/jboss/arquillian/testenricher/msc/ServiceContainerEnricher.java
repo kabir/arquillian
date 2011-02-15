@@ -41,7 +41,7 @@ import org.jboss.msc.service.ServiceContainer;
  */
 public class ServiceContainerEnricher implements TestEnricher, ServiceContainerInjector
 {
-   private static ServiceContainer serviceContainer;
+   private ServiceContainer serviceContainer;
 
    @Override
    public void inject(ServiceContainer value) throws InjectionException
@@ -56,6 +56,9 @@ public class ServiceContainerEnricher implements TestEnricher, ServiceContainerI
 
    public void enrich(Context context, Object testCase)
    {
+       // [TODO] Remove this hack when it becomes possible to pass data to the enrichers
+      inject(ServiceContainerAssociation.getServiceContainer());
+
       Class<? extends Object> testClass = testCase.getClass();
       for (Field field : testClass.getDeclaredFields())
       {
