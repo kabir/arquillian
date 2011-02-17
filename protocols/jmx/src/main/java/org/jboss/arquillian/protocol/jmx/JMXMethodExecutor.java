@@ -17,6 +17,7 @@
 package org.jboss.arquillian.protocol.jmx;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -24,6 +25,9 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import javax.management.MBeanServerConnection;
@@ -56,6 +60,7 @@ public class JMXMethodExecutor implements ContainerMethodExecutor
    private final MBeanServerConnection mbeanServer;
    private final ExecutionType executionType;
    private final Map<String, String> props;
+   private final ExecutorService executor = Executors.newCachedThreadPool();
 
    public enum ExecutionType
    {
@@ -76,20 +81,41 @@ public class JMXMethodExecutor implements ContainerMethodExecutor
          throw new IllegalArgumentException("TestMethodExecutor null");
 
       Object testInstance = testMethodExecutor.getInstance();
-      String testClass = testInstance.getClass().getName();
-      String testMethod = testMethodExecutor.getMethod().getName();
+      final String testClass = testInstance.getClass().getName();
+      final String testMethod = testMethodExecutor.getMethod().getName();
 
       TestResult result = null;
       NotificationListener listener = null;
       try
       {
-         JMXTestRunnerMBean testRunner = getMBeanProxy(JMXTestRunnerMBean.OBJECT_NAME, JMXTestRunnerMBean.class);
+         final JMXTestRunnerMBean testRunner = getMBeanProxy(JMXTestRunnerMBean.OBJECT_NAME, JMXTestRunnerMBean.class);
          listener = registerNotificationListener(JMXTestRunnerMBean.OBJECT_NAME, testRunner, testInstance);
 
          if (executionType == ExecutionType.EMBEDDED)
          {
-            InputStream resultStream = testRunner.runTestMethodEmbedded(testClass, testMethod, props);
-            result = Utils.deserialize(resultStream, TestResult.class);
+            InputStream resultStream = executor.submit(new Callable<InputStream>()
+            {
+               @Override
+               public InputStream call() throws Exception
+               {
+                  return testRunner.runTestMethodEmbedded(testClass, testMethod, props);
+               }
+            }).get();
+            
+            try
+            {
+               result = Utils.deserialize(resultStream, TestResult.class);
+            }
+            finally
+            {
+               try
+               {
+                  resultStream.close();
+               }
+               catch (IOException ignore)
+               {
+               }
+            }
          }
          else if (executionType == ExecutionType.REMOTE)
          {
@@ -225,4 +251,6 @@ public class JMXMethodExecutor implements ContainerMethodExecutor
       }
       return null;
    }
+   
+   
 }
